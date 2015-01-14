@@ -21,6 +21,15 @@ local function iter(l)
   end)
 end
 
+-- allow indexing into strings
+getmetatable('').__index = function(str,i)
+  if type(i) == 'number' then
+    return string.sub(str,i,i)
+  else
+    return string[i]
+  end
+end
+
 local function reduce(func, l, accum)
   for i in iter(l) do
     accum = func(accum, i)

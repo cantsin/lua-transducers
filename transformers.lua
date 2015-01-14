@@ -15,6 +15,17 @@ local append = (function()
   }
 end)()
 
+local concat = (function()
+  return {
+    init = '',
+    step = function(str, ch)
+      str = str .. ch
+      return str
+    end,
+    complete = function(result) return result end
+  }
+end)()
+
 local sum = (function()
   local accum = 0
   return {
@@ -42,5 +53,6 @@ end)()
 return {
   sum = sum,
   mult = mult,
+  concat = concat,
   append = append,
 }

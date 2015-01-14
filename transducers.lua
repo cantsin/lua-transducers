@@ -137,7 +137,13 @@ local function transduce(transducer, f, init, seq)
 end
 
 local function into(transducer, init, seq)
-  return transduce(transducer, tr.append, init, seq)
+  if type(init) == 'table' then
+    return transduce(transducer, tr.append, init, seq)
+  elseif type(init) == 'string' then
+    return transduce(transducer, tr.concat, init, seq)
+  else
+    error('unknown type', type(init))
+  end
 end
 
 return {

@@ -73,3 +73,8 @@ local transducer = f.compose(t.map(plus1), t.filter(odd))
 local result = t.into(transducer, {}, arr)
 print('demonstrating into.', inspect(result))
 -- { 3, 5 }
+
+local transducer = f.compose(t.drop(1), t.take(4), t.drop(1))
+local result = t.into(transducer, '', 'transducers')
+print('demonstrating generality of iteration.', inspect(result))
+-- "ans"
