@@ -2,6 +2,21 @@
 -- use underscore.lua for this?
 -- http://lua-users.org/wiki/CurriedLua
 
+function compose(...)
+  local fns = {...}
+  local n = #fns
+  return function(...)
+    local state = table.pack(...)
+    -- right-to-left
+    local index = n
+    while index > 0 do
+      state = { fns[index](unpack(state)) }
+      index = index - 1
+    end
+    return unpack(state)
+  end
+end
+
 function map(func)
   return function(array)
     local new_array = {}
