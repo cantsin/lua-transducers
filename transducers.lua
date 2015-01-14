@@ -3,7 +3,7 @@ local f = require 'functional'
 
 -- formalize, a la http://clojure.org/transducers
 
-function wrap(xf)
+local function wrap(xf)
   return {
     init = function() error("no init function.") end,
     step = xf or error("no step function."),
@@ -11,7 +11,7 @@ function wrap(xf)
   }
 end
 
-function map(f)
+local function map(f)
   return function(xf)
     return {
       init = xf.init,
@@ -24,7 +24,7 @@ function map(f)
   end
 end
 
-function filter(predicate)
+local function filter(predicate)
   return function(xf)
     return {
       init = xf.init,
@@ -40,12 +40,12 @@ function filter(predicate)
   end
 end
 
-function reduce(xf, init, input)
+local function reduce(xf, init, input)
   local result = f.reduce(xf.step, input, init)
   return xf.complete(result)
 end
 
-function transduce(transform, f, init, seq)
+local function transduce(transform, f, init, seq)
   if type(f) == 'function' then
     f = wrap(f)
   end
@@ -54,5 +54,7 @@ function transduce(transform, f, init, seq)
 end
 
 return {
-  transduce = transduce
+  map = map,
+  filter = filter,
+  transduce = transduce,
 }

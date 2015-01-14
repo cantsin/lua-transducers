@@ -1,6 +1,6 @@
 -- generic FP functions.
 
-function compose(...)
+local function compose(...)
   local fns = {...}
   local n = #fns
   return function(...)
@@ -15,7 +15,7 @@ function compose(...)
   end
 end
 
-function iter(l)
+local function iter(l)
   return coroutine.wrap(function()
       for i=1,#l do
         coroutine.yield(l[i])
@@ -23,7 +23,7 @@ function iter(l)
   end)
 end
 
-function reduce(func, l, accum)
+local function reduce(func, l, accum)
   for i in iter(l) do
     accum = func(accum, i)
   end

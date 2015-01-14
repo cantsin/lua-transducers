@@ -1,5 +1,7 @@
-require 'transducers'
 
+local t = require 'transducers'
+local f = require 'functional'
+local inspect = require 'inspect'
 
 local function plus1(n)
   return n + 1
@@ -17,19 +19,19 @@ end
 local arr = {1,2,3,4}
 
 -- demonstrating transduce.
-local transducer = map(plus1)
-local result = transduce(transducer, push, {}, arr)
+local transducer = t.map(plus1)
+local result = t.transduce(transducer, push, {}, arr)
 print(inspect(result))
 -- { 2, 3, 4, 5 }
 
 -- demonstrating compose.
-local transducer = compose(map(plus1), map(plus1), map(plus1), map(plus1))
-local result = transduce(transducer, push, {}, arr)
+local transducer = f.compose(t.map(plus1), t.map(plus1), t.map(plus1), t.map(plus1))
+local result = t.transduce(transducer, push, {}, arr)
 print(inspect(result))
 -- { 5, 6, 7, 8 }
 
 -- demonstrating filter.
-local transducer = compose(filter(odd), map(plus1), map(plus1), map(plus1))
-local result = transduce(transducer, push, {}, arr)
+local transducer = f.compose(t.filter(odd), t.map(plus1), t.map(plus1), t.map(plus1))
+local result = t.transduce(transducer, push, {}, arr)
 print(inspect(result))
 -- { 5, 7 }
