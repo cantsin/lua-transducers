@@ -53,3 +53,9 @@ local transducer = t.map(plus1)
 local result = t.transduce(transducer, t.append, {}, arr)
 print(inspect(result))
 -- { 2, 3, 4, 5 }
+
+-- demonstrating drop.
+local transducer = f.compose(t.drop(2), t.map(plus1))
+local result = t.transduce(transducer, t.append, {}, arr)
+print(inspect(result))
+-- { 4, 5 }

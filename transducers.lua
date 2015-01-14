@@ -66,10 +66,28 @@ end
 local function remove(predicate)
   local not_ = function(pred)
     return function(x)
-      return not pred(x);
+      return not pred(x)
     end
   end
   return filter(not_(predicate))
+end
+
+local function drop(n)
+  return function(xf)
+    local left = n
+    return {
+      init = xf.init,
+      step = function(value, item)
+        if(left > 0) then
+          left = left - 1
+        else
+          value = xf.step(value, item)
+        end
+        return value
+      end,
+      complete = xf.complete
+    }
+  end
 end
 
 local function reduce(xf, init, input)
@@ -91,6 +109,7 @@ end
 return {
   map = map,
   sum = sum,
+  drop = drop,
   remove = remove,
   filter = filter,
   reduce = reduce,
