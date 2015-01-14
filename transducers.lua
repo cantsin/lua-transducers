@@ -75,18 +75,17 @@ local function drop(n)
 end
 
 local function reduce(xf, init, input)
-  if type(xf) == 'function' then
-    xf = wrap(xf)
-  end
   local result = f.reduce(xf.step, input, init)
   return xf.complete(result)
 end
 
-local function transduce(transform, f, init, seq)
-  if type(f) == 'function' then
-    f = wrap(f)
+local function transduce(transducer, f, init, seq)
+  local transformer = f
+  if type(transformer) == 'function' then
+     -- we have a function; convert to a transformer
+    transformer = wrap(transformer)
   end
-  local xf = transform(f)
+  local xf = transducer(transformer)
   return reduce(xf, init, seq)
 end
 
