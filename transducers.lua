@@ -24,6 +24,29 @@ local function map(f)
   end
 end
 
+local append = (function()
+  return {
+    init = {},
+    step = function(tbl, result)
+      table.insert(tbl, result)
+      return tbl
+    end,
+    complete = function(result) return result end
+  }
+end)()
+
+local sum = (function()
+  local accum = 0
+  return {
+    init = function() return 0 end,
+    step = function(tbl, result)
+      accum = accum + result
+      return tbl
+    end,
+    complete = function(result) return accum end
+  }
+end)()
+
 local function filter(predicate)
   return function(xf)
     return {
@@ -67,8 +90,10 @@ end
 
 return {
   map = map,
+  sum = sum,
   remove = remove,
   filter = filter,
   reduce = reduce,
+  append = append,
   transduce = transduce,
 }

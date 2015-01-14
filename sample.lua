@@ -43,18 +43,13 @@ print(inspect(result))
 -- { 4, 6 }
 
 -- demonstrating filter and reduce (via sum transducer).
-local sum = function()
-  local accum = 0
-  return {
-    init = function() return 0 end,
-    step = function(tbl, result)
-      accum = accum + result
-      return tbl
-    end,
-    complete = function(result) return accum end
-  }
-end
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
-local result = t.transduce(transducer, sum(), {}, arr)
+local result = t.transduce(transducer, t.sum, {}, arr)
 print(inspect(result))
 -- 10
+
+-- demonstrating that push is equivalent to the append transducer.
+local transducer = t.map(plus1)
+local result = t.transduce(transducer, t.append, {}, arr)
+print(inspect(result))
+-- { 2, 3, 4, 5 }
