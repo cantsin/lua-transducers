@@ -5,11 +5,9 @@ local function compose(...)
   local n = #fns
   return function(...)
     local state = table.pack(...)
-    -- right-to-left
-    local index = n
-    while index > 0 do
+    -- left-to-right
+    for index = 1,n do
       state = { fns[index](unpack(state)) }
-      index = index - 1
     end
     return unpack(state)
   end

@@ -32,22 +32,22 @@ print('demonstrating compose.', inspect(result))
 local transducer = f.compose(t.filter(odd), t.map(plus1), t.map(plus1), t.map(plus1))
 local result = t.transduce(transducer, push, {}, arr)
 print('demonstrating filter.', inspect(result))
--- { 5, 7 }
+-- { 4, 6 }
 
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
 local result = t.transduce(transducer, push, {}, arr)
 print('demonstrating response.', inspect(result))
--- { 4, 6 }
+-- { 5, 7 }
 
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
 local result = t.transduce(transducer, tr.sum, {}, arr)
 print('demonstrating transformation and then reduction with sum.', inspect(result))
--- 10
+-- 12
 
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
 local result = t.transduce(transducer, tr.mult, {}, arr)
 print('demonstrating transformation and then reduction with mult.', inspect(result))
--- 24
+-- 35
 
 local transducer = t.map(plus1)
 local result = t.transduce(transducer, tr.append, {}, arr)
