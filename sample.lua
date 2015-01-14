@@ -7,6 +7,10 @@ local function plus1(n)
   return n + 1
 end
 
+local function sum(n, m)
+  return n + m
+end
+
 local function odd(n)
   return n % 2 == 0
 end
@@ -35,3 +39,8 @@ local transducer = f.compose(t.filter(odd), t.map(plus1), t.map(plus1), t.map(pl
 local result = t.transduce(transducer, push, {}, arr)
 print(inspect(result))
 -- { 5, 7 }
+
+-- demonstrating reduce.
+local result = t.reduce(sum, 1, arr)
+print(inspect(result))
+-- 11

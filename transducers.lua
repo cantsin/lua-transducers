@@ -41,6 +41,9 @@ local function filter(predicate)
 end
 
 local function reduce(xf, init, input)
+  if type(xf) == 'function' then
+    xf = wrap(xf)
+  end
   local result = f.reduce(xf.step, input, init)
   return xf.complete(result)
 end
@@ -56,5 +59,6 @@ end
 return {
   map = map,
   filter = filter,
+  reduce = reduce,
   transduce = transduce,
 }
