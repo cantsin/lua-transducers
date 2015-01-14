@@ -7,16 +7,12 @@ local function plus1(n)
   return n + 1
 end
 
-local function sum(n, m)
-  return n + m
-end
-
 local function odd(n)
   return n % 2 == 0
 end
 
-local function push(tbl, index)
-  table.insert(tbl, index)
+local function push(tbl, result)
+  table.insert(tbl, result)
   return tbl
 end
 
@@ -46,7 +42,19 @@ local result = t.transduce(transducer, push, {}, arr)
 print(inspect(result))
 -- { 4, 6 }
 
--- demonstrating reduce.
-local result = t.reduce(sum, 1, arr)
+-- demonstrating filter and reduce (via sum transducer).
+local sum = function()
+  local accum = 0
+  return {
+    init = function() return 0 end,
+    step = function(tbl, result)
+      accum = accum + result
+      return tbl
+    end,
+    complete = function(result) return accum end
+  }
+end
+local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
+local result = t.transduce(transducer, sum(), {}, arr)
 print(inspect(result))
--- 11
+-- 10
