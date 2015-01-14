@@ -40,6 +40,15 @@ local function filter(predicate)
   end
 end
 
+local function remove(predicate)
+  local not_ = function(pred)
+    return function(x)
+      return not pred(x);
+    end
+  end
+  return filter(not_(predicate))
+end
+
 local function reduce(xf, init, input)
   if type(xf) == 'function' then
     xf = wrap(xf)
@@ -58,6 +67,7 @@ end
 
 return {
   map = map,
+  remove = remove,
   filter = filter,
   reduce = reduce,
   transduce = transduce,

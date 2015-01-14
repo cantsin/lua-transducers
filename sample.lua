@@ -40,6 +40,12 @@ local result = t.transduce(transducer, push, {}, arr)
 print(inspect(result))
 -- { 5, 7 }
 
+-- demonstrating remove.
+local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
+local result = t.transduce(transducer, push, {}, arr)
+print(inspect(result))
+-- { 4, 6 }
+
 -- demonstrating reduce.
 local result = t.reduce(sum, 1, arr)
 print(inspect(result))
