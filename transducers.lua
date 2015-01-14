@@ -74,8 +74,54 @@ local function drop(n)
   end
 end
 
+-- early termination of reduce (see clojure spec)
+local function reduced(value)
+  return {
+    value = value,
+    __reduced__ = true
+  }
+end
+
+local function take(n)
+  return function(xf)
+  local left = n
+    return {
+      init = xf.init,
+      step = function(value, item)
+        value = xf.step(value, item)
+        left = left - 1
+        if(left <= 0) then
+          value = reduced(value);
+        end
+        return value
+      end,
+      complete = xf.complete
+    }
+  end
+end
+
+local function is_reduced(value)
+  return value.__reduced__
+end
+
+local function deref(v)
+  return v.value
+end
+
 local function reduce(xf, init, input)
-  local result = f.reduce(xf.step, input, init)
+  -- we do not use f.reduce here because we need to account for early
+  -- termination of reduce.
+  --
+  -- local result = f.reduce(xf.step, input, init)
+  -- return xf.complete(result)
+  local result = init
+  for i in f.iter(input) do
+    result = xf.step(result, i)
+    if is_reduced(result) then
+      result = deref(result)
+      break
+    end
+  end
   return xf.complete(result)
 end
 
@@ -92,6 +138,7 @@ end
 return {
   map = map,
   drop = drop,
+  take = take,
   remove = remove,
   filter = filter,
   reduce = reduce,
