@@ -1,5 +1,6 @@
 
 local f = require 'functional'
+local tr = require 'transformers'
 
 -- canonical uri: http://clojure.org/transducers
 --
@@ -135,10 +136,15 @@ local function transduce(transducer, f, init, seq)
   return reduce(xf, init, seq)
 end
 
+local function into(transducer, init, seq)
+  return transduce(transducer, tr.append, init, seq)
+end
+
 return {
   map = map,
   drop = drop,
   take = take,
+  into = into,
   remove = remove,
   filter = filter,
   reduce = reduce,

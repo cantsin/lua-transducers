@@ -68,3 +68,8 @@ local transducer = f.compose(t.drop(1), t.take(2), t.drop(1))
 local result = t.transduce(transducer, tr.append, {}, arr)
 print('demonstrating composition of take and drop.', inspect(result))
 -- { 3 }
+
+local transducer = f.compose(t.map(plus1), t.filter(odd))
+local result = t.into(transducer, {}, arr)
+print('demonstrating into.', inspect(result))
+-- { 3, 5 }
