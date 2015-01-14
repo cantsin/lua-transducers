@@ -24,12 +24,20 @@ function map(f)
   end
 end
 
-function iter(l)
-  return coroutine.wrap(function()
-      for i=1,#l do
-        coroutine.yield(l[i])
-      end
-  end)
+function filter(predicate)
+  return function(xf)
+    return {
+      init = xf.init,
+      step = function(value, item)
+        local allow = predicate(item)
+        if allow then
+          value = xf.step(value, item)
+        end
+        return value
+      end,
+      complete = xf.complete
+    }
+  end
 end
 
 function reduce(xf, init, input)
