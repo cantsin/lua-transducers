@@ -1,5 +1,12 @@
 require 'transducers'
 
+local function print_arr(seq)
+  for i=1,#seq do
+    io.write(seq[i], ' ')
+  end
+  print()
+end
+
 local function plus1(n)
   return n + 1
 end
@@ -14,15 +21,11 @@ local arr = {1,2,3,4}
 -- demonstrating transduce.
 local transducer = map(plus1)
 local result = transduce(transducer, push, {}, arr)
-for i=1,#result do
-  print(result[i])
-end
+print_arr(result)
 -- {2,3,4,5}
 
 -- demonstrating compose.
 local transducer = compose(map(plus1), map(plus1), map(plus1), map(plus1))
 local result = transduce(transducer, push, {}, arr)
-for i=1,#result do
-  print(result[i])
-end
+print_arr(result)
 -- {5,6,7,8}

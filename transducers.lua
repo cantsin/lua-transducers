@@ -1,29 +1,26 @@
 
--- use underscore.lua for this?
--- http://lua-users.org/wiki/CurriedLua
+local f = require 'functional'
 
-function compose(...)
-  local fns = {...}
-  local n = #fns
-  return function(...)
-    local state = table.pack(...)
-    -- right-to-left
-    local index = n
-    while index > 0 do
-      state = { fns[index](unpack(state)) }
-      index = index - 1
-    end
-    return unpack(state)
-  end
+-- formalize, a la http://clojure.org/transducers
+
+function wrap(xf)
+  return {
+    init = function() error("no init function.") end,
+    step = xf or error("no step function."),
+    complete = function(result) return result end
+  }
 end
 
-function map(func)
-  return function(array)
-    local new_array = {}
-    for i,v in ipairs(array) do
-      new_array[i] = func(v)
-    end
-    return new_array
+function map(f)
+  return function(xf)
+    return {
+      init = xf.init,
+      step = function(result, item)
+        local mapped = f(item)
+        return xf.step(result, mapped)
+      end,
+      complete = xf.complete
+    }
   end
 end
 
@@ -35,21 +32,19 @@ function iter(l)
   end)
 end
 
-function reduce(l, accum, func)
-  for i in iter(l) do
-    accum = func(accum, i)
-  end
-  return accum
+function reduce(xf, init, input)
+  local result = f.reduce(xf.step, input, init)
+  return xf.complete(result)
 end
 
 function transduce(transform, f, init, seq)
-  local reducer = function(accum, i)
-    return transform(seq, f(accum, i))
+  if type(f) == 'function' then
+    f = wrap(f)
   end
-  return reduce(seq, init, reducer)
+  local xf = transform(f)
+  return reduce(xf, init, seq)
 end
 
 return {
-  map=map,
-  transduce=transduce
+  transduce = transduce
 }
