@@ -1,17 +1,9 @@
 
--- TODO: take
--- TODO: into
-
 local f = require 'functional'
 
--- formalize, a la http://clojure.org/transducers:
+-- canonical uri: http://clojure.org/transducers
 --
--- a transformer protocol must have:
---   init (no arity)
---   step (two arity)
---   complete (one arity)
---
--- here, step is a reducing function:
+-- a transformer 'step' is a reducing function:
 --   type Reducer a r = r -> a -> r
 --   or loosely, r -> a -> r
 -- a transducer is a transformation from one reducing function to another:
@@ -38,41 +30,6 @@ local function map(f)
     }
   end
 end
-
-local append = (function()
-  return {
-    init = {},
-    step = function(tbl, result)
-      table.insert(tbl, result)
-      return tbl
-    end,
-    complete = function(result) return result end
-  }
-end)()
-
-local sum = (function()
-  local accum = 0
-  return {
-    init = function() return 0 end,
-    step = function(tbl, result)
-      accum = accum + result
-      return tbl
-    end,
-    complete = function(result) return accum end
-  }
-end)()
-
-local mult = (function()
-  local accum = 1
-  return {
-    init = function() return 0 end,
-    step = function(tbl, result)
-      accum = accum * result
-      return tbl
-    end,
-    complete = function(result) return accum end
-  }
-end)()
 
 local function filter(predicate)
   return function(xf)
@@ -135,12 +92,9 @@ end
 
 return {
   map = map,
-  sum = sum,
   drop = drop,
-  mult = mult,
   remove = remove,
   filter = filter,
   reduce = reduce,
-  append = append,
   transduce = transduce,
 }

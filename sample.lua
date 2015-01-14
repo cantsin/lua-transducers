@@ -1,6 +1,7 @@
 
 local t = require 'transducers'
 local f = require 'functional'
+local tr = require 'transformers'
 local inspect = require 'inspect'
 
 local function plus1(n)
@@ -39,21 +40,21 @@ print('demonstrating response.', inspect(result))
 -- { 4, 6 }
 
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
-local result = t.transduce(transducer, t.sum, {}, arr)
+local result = t.transduce(transducer, tr.sum, {}, arr)
 print('demonstrating transformation and then reduction with sum.', inspect(result))
 -- 10
 
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
-local result = t.transduce(transducer, t.mult, {}, arr)
+local result = t.transduce(transducer, tr.mult, {}, arr)
 print('demonstrating transformation and then reduction with mult.', inspect(result))
 -- 24
 
 local transducer = t.map(plus1)
-local result = t.transduce(transducer, t.append, {}, arr)
-print('demonstrating that push is equivalent to the append transducer.', inspect(result))
+local result = t.transduce(transducer, tr.append, {}, arr)
+print('demonstrating that push is equivalent to the append transformer.', inspect(result))
 -- { 2, 3, 4, 5 }
 
 local transducer = f.compose(t.drop(2), t.map(plus1))
-local result = t.transduce(transducer, t.append, {}, arr)
+local result = t.transduce(transducer, tr.append, {}, arr)
 print('demonstrating drop.', inspect(result))
 -- { 4, 5 }
