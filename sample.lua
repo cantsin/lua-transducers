@@ -40,8 +40,13 @@ print('demonstrating response.', inspect(result))
 
 local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
 local result = t.transduce(transducer, t.sum, {}, arr)
-print('demonstrating transformation and then reduction.', inspect(result))
+print('demonstrating transformation and then reduction with sum.', inspect(result))
 -- 10
+
+local transducer = f.compose(t.remove(odd), t.map(plus1), t.map(plus1), t.map(plus1))
+local result = t.transduce(transducer, t.mult, {}, arr)
+print('demonstrating transformation and then reduction with mult.', inspect(result))
+-- 24
 
 local transducer = t.map(plus1)
 local result = t.transduce(transducer, t.append, {}, arr)

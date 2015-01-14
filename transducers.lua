@@ -1,7 +1,22 @@
 
+-- TODO: take
+-- TODO: into
+
 local f = require 'functional'
 
--- formalize, a la http://clojure.org/transducers
+-- formalize, a la http://clojure.org/transducers:
+--
+-- a transformer protocol must have:
+--   init (no arity)
+--   step (two arity)
+--   complete (one arity)
+--
+-- here, step is a reducing function:
+--   type Reducer a r = r -> a -> r
+--   or loosely, r -> a -> r
+-- a transducer is a transformation from one reducing function to another:
+--   type Transducer a b = forall r . Reducer a r -> Reducer b r
+--   or loosely, (r -> a -> r) -> (r -> a -> r)
 
 local function wrap(xf)
   return {
@@ -41,6 +56,18 @@ local sum = (function()
     init = function() return 0 end,
     step = function(tbl, result)
       accum = accum + result
+      return tbl
+    end,
+    complete = function(result) return accum end
+  }
+end)()
+
+local mult = (function()
+  local accum = 1
+  return {
+    init = function() return 0 end,
+    step = function(tbl, result)
+      accum = accum * result
       return tbl
     end,
     complete = function(result) return accum end
@@ -110,6 +137,7 @@ return {
   map = map,
   sum = sum,
   drop = drop,
+  mult = mult,
   remove = remove,
   filter = filter,
   reduce = reduce,
