@@ -6,7 +6,7 @@
 
 local append = (function()
   return {
-    init = {},
+    init = function() return {} end,
     step = function(tbl, result)
       table.insert(tbl, result)
       return tbl
@@ -17,7 +17,7 @@ end)()
 
 local concat = (function()
   return {
-    init = '',
+    init = function() return '' end,
     step = function(str, ch)
       str = str .. ch
       return str
