@@ -13,7 +13,7 @@ local tr = require 'transformers'
 
 local function wrap(xf)
   return {
-    init = function() error("no init function.") end,
+    init = function() return {} end,
     step = xf or error("no step function."),
     complete = function(result) return result end
   }
@@ -102,20 +102,23 @@ local function take(n)
 end
 
 local function is_reduced(value)
-  return value.__reduced__
+  if type(value) == 'table' then
+    return value.__reduced__
+  end
+  return false
 end
 
 local function deref(v)
   return v.value
 end
 
-local function reduce(xf, init, input)
+local function reduce(xf, input)
   -- we do not use f.reduce here because we need to account for early
   -- termination of reduce.
   --
   -- local result = f.reduce(xf.step, input, init)
   -- return xf.complete(result)
-  local result = init
+  local result = xf.init()
   for i in f.iter(input) do
     result = xf.step(result, i)
     if is_reduced(result) then
@@ -126,21 +129,23 @@ local function reduce(xf, init, input)
   return xf.complete(result)
 end
 
-local function transduce(transducer, f, init, seq)
+local function transduce(transducer, f, seq)
   local transformer = f
   if type(transformer) == 'function' then
      -- we have a function; convert to a transformer
     transformer = wrap(transformer)
   end
   local xf = transducer(transformer)
-  return reduce(xf, init, seq)
+  return reduce(xf, seq)
 end
 
 local function into(transducer, init, seq)
   if type(init) == 'table' then
-    return transduce(transducer, tr.append, init, seq)
+    local xf = transducer(tr.append)
+    return reduce(xf, seq)
   elseif type(init) == 'string' then
-    return transduce(transducer, tr.concat, init, seq)
+    local xf = transducer(tr.concat)
+    return reduce(xf, seq)
   else
     error('unknown type', type(init))
   end
